@@ -1,41 +1,60 @@
 import React, { useState, useEffect } from 'react';
 
-function DevForm ({ onSubmit }) {
+function DevForm ({ dev, onSubmit }) {
 
+  const [id,          setId]         = useState('');
   const [github_user, setGithubUser] = useState('');
   const [techs,       setTechs]      = useState('');
   const [latitude,    setLatitude]   = useState('');
   const [longitude,   setLongitude]  = useState('');
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
 
-        setLatitude(latitude);
-        setLongitude(longitude);
-      },
-      (error) => {
-        console.log(error);
-      },
-      {
-        timeout: 30000
-      }
-    );
-  }, []); 
+    if (dev) {
+
+      const [longitude, latitude] = dev.location.coordinates; // Desestruturação de array
+
+      setId(dev._id);
+      setGithubUser(dev.github_user);
+      setTechs(dev.techs.join(', '));
+      setLatitude(latitude);
+      setLongitude(longitude);
+
+    } else {
+
+      navigator.geolocation.getCurrentPosition(
+
+        (position) => {
+          const {latitude, longitude} = position.coords; // Desestruturação de objeto (json)
+          setLatitude(latitude);
+          setLongitude(longitude);
+        },
+        (error) => {
+          console.log(error);
+        },
+        { timeout: 30000 }
+
+      );
+
+    }
+
+  }, [dev]);
 
   async function handleSubmit(e) {
     e.preventDefault();
 
-    await onSubmit({
+    await onSubmit(id, {
       github_user,
       techs,
       latitude,
       longitude
     });
 
+    setId('');
     setGithubUser('');
     setTechs('');
+    setLatitude('');
+    setLongitude('');
   }
 
   return (

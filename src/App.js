@@ -19,33 +19,57 @@ import DevItem from './components/DevItem';
 function App() {
 
   const [devs, setDevs] = useState([]);
+  const [dev,  setDev]  = useState();
 
   useEffect(() => {
-    async function loadDevs() {
-      const response = await api.get('/devs');
-
-      setDevs(response.data);
-    }
-
     loadDevs();
   }, []);
 
-  async function handleAddDev(data) {
-    const response = await api.post('/devs', data);
+  async function loadDevs() {
+    const response = await api.get('/devs');
 
-    setDevs([...devs, response.data]);
+    setDevs(response.data);
+  }
+
+  async function addDev(data) {
+    await api.post('/devs', data);
+  }
+
+  async function updateDev(id, data) {
+    await api.put(`/devs/${id}`, data);
+  }
+
+  async function removeDev(dev) {
+    await api.delete(`/devs/${dev._id}`);
+    
+    loadDevs();
+  }
+
+  async function editDev(data) {
+    setDev(data);
+  }
+
+  async function submitForm(id, data) {
+
+    if (id === '') {
+      await addDev(data);
+    } else {
+      await updateDev(id, data);
+    }
+
+    loadDevs();
   }
 
   return (
     <div id="app">
       <aside>
         <strong>Cadastrar</strong>
-        <DevForm onSubmit={handleAddDev} />
+        <DevForm dev={dev} onSubmit={submitForm} />
       </aside>
       <main>
         <ul>
-          {devs.map(dev => (
-            <DevItem key={dev._id} dev={dev} />
+          {devs.map(dev => ( // retorno de callback com arrow function (ES2015)
+            <DevItem key={dev._id} dev={dev} onEdit={editDev} onRemove={removeDev} />
           ))}
         </ul>
       </main>
