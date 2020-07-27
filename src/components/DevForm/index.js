@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
-function DevForm ({ dev, onSubmit }) {
-
+function DevForm ({ dev, onSubmit }) 
+{
   const [id,          setId]         = useState('');
   const [github_user, setGithubUser] = useState('');
   const [techs,       setTechs]      = useState('');
@@ -11,36 +11,43 @@ function DevForm ({ dev, onSubmit }) {
   useEffect(() => {
 
     if (dev) {
-
-      const [longitude, latitude] = dev.location.coordinates; // Desestruturação de array
-
-      setId(dev._id);
-      setGithubUser(dev.github_user);
-      setTechs(dev.techs.join(', '));
-      setLatitude(latitude);
-      setLongitude(longitude);
-
+      setFormData(dev);
     } else {
-
-      navigator.geolocation.getCurrentPosition(
-
-        (position) => {
-          const {latitude, longitude} = position.coords; // Desestruturação de objeto (json)
-          setLatitude(latitude);
-          setLongitude(longitude);
-        },
-        (error) => {
-          console.log(error);
-        },
-        { timeout: 30000 }
-
-      );
-
+      setGeolocation();
     }
 
   }, [dev]);
 
-  async function handleSubmit(e) {
+  async function setFormData(data)
+  {
+    const [longitude, latitude] = data.location.coordinates; // Desestruturação de array
+
+    setId(data._id);
+    setGithubUser(data.github_user);
+    setTechs(data.techs.join(', '));
+    setLatitude(latitude);
+    setLongitude(longitude);
+  }
+
+  async function setGeolocation()
+  {
+    navigator.geolocation.getCurrentPosition(
+
+      (position) => {
+        const {latitude, longitude} = position.coords; // Desestruturação de objeto (json)
+        setLatitude(latitude);
+        setLongitude(longitude);
+      },
+      (error) => {
+        console.log(error);
+      },
+      { timeout: 30000 }
+
+    );
+  }
+
+  async function handleSubmit(e) 
+  {
     e.preventDefault();
 
     await onSubmit(id, {
@@ -53,8 +60,7 @@ function DevForm ({ dev, onSubmit }) {
     setId('');
     setGithubUser('');
     setTechs('');
-    setLatitude('');
-    setLongitude('');
+    setGeolocation();
   }
 
   return (

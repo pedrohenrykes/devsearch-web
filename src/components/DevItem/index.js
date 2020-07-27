@@ -1,13 +1,15 @@
 import React from 'react';
 import './styles.css';
 
-function DevItem({ dev, onEdit, onRemove }) {
-
-  async function editDev() {
+function DevItem({ dev, onEdit, onRemove }) 
+{
+  async function handleEditDev() 
+  {
     await onEdit(dev);
   }
 
-  async function removeDev() {
+  async function handleRemoveDev() 
+  {
     await onRemove(dev);
   }
 
@@ -25,8 +27,8 @@ function DevItem({ dev, onEdit, onRemove }) {
         <a href={`https://github.com/${dev.github_user}`}>Acessar perfíl no GitHub</a>
       </section>
       <footer>
-        <button type="button" onClick={editDev}>Editar</button>
-        <button type="button" onClick={removeDev}>Remover</button>
+        <button type="button" onClick={handleEditDev}>Editar</button>
+        <button type="button" onClick={handleRemoveDev}>Remover</button>
       </footer>
     </li>
   );

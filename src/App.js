@@ -16,8 +16,8 @@ import DevItem from './components/DevItem';
  * Estados: Informações mantidas pelos componentes (PS: imutabilidade)
  */
 
-function App() {
-
+function App() 
+{
   const [devs, setDevs] = useState([]);
   const [dev,  setDev]  = useState();
 
@@ -25,51 +25,58 @@ function App() {
     loadDevs();
   }, []);
 
-  async function loadDevs() {
+  async function loadDevs() 
+  {
     const response = await api.get('/devs');
 
     setDevs(response.data);
   }
 
-  async function addDev(data) {
-    await api.post('/devs', data);
+  async function addDev(data) 
+  {
+    const response = await api.post('/devs', data);
+
+    setDevs([...devs, response.data]);
   }
 
-  async function updateDev(id, data) {
+  async function updateDev(id, data) 
+  {
     await api.put(`/devs/${id}`, data);
-  }
 
-  async function removeDev(dev) {
-    await api.delete(`/devs/${dev._id}`);
-    
     loadDevs();
   }
 
-  async function editDev(data) {
+  async function handleRemoveDev(dev) 
+  {
+    await api.delete(`/devs/${dev._id}`);
+
+    loadDevs();
+  }
+
+  async function handleEditDev(data) 
+  {
     setDev(data);
   }
 
-  async function submitForm(id, data) {
-
+  async function handleSubmitForm(id, data) 
+  {
     if (id === '') {
       await addDev(data);
     } else {
       await updateDev(id, data);
     }
-
-    loadDevs();
   }
 
   return (
     <div id="app">
       <aside>
         <strong>Cadastrar</strong>
-        <DevForm dev={dev} onSubmit={submitForm} />
+        <DevForm dev={dev} onSubmit={handleSubmitForm} />
       </aside>
       <main>
         <ul>
           {devs.map(dev => ( // retorno de callback com arrow function (ES2015)
-            <DevItem key={dev._id} dev={dev} onEdit={editDev} onRemove={removeDev} />
+            <DevItem key={dev._id} dev={dev} onEdit={handleEditDev} onRemove={handleRemoveDev} />
           ))}
         </ul>
       </main>
